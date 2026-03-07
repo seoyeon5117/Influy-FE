@@ -1,6 +1,6 @@
 import { instance } from '@/api/axiosInstance';
 import { generateApiPath } from '@/api/utils';
-import { API_DOMAINS, SELLER_API_DOMAINS } from '@/constants/api';
+import { SELLER_API_DOMAINS } from '@/constants/api';
 import { ApiResponse, Pagination } from '@/types/common/ApiResponse.types';
 import {
   FaqCardDetailResponse,
@@ -8,6 +8,7 @@ import {
   QuestionCardListType,
 } from '@/types/common/FaqCardType.types';
 import { FaqQuestion } from '@/types/common/ItemType.types';
+import { DUMMY_DATA } from '@/constants/dummyData';
 
 export const postFaqCard = async ({
   sellerId,
@@ -86,30 +87,34 @@ export const patchFaqPin = async ({
 };
 
 export const getFaqCardDetail = async ({
-  sellerId,
-  itemId,
   faqCardId,
 }: {
   sellerId: number;
   itemId: number;
   faqCardId: number;
 }) => {
-  const response = await instance.get<ApiResponse<FaqCardDetailResponse>>(
-    generateApiPath(SELLER_API_DOMAINS.SELLER_MY_GET_FAQ_CARD_DETAIL, {
-      sellerId,
-      itemId,
-      faqCardId,
-    })
-  );
-  return response.data.result;
+  return new Promise<FaqCardDetailResponse>((resolve) => {
+    setTimeout(() => {
+      const faqCard =
+        DUMMY_DATA.FAQ_CARDS.find((card) => card.faqCardId === faqCardId) ||
+        DUMMY_DATA.FAQ_CARDS[0];
+
+      resolve({
+        id: faqCard.faqCardId,
+        pinned: faqCard.isPinned,
+        adjustImg: true,
+        questionContent: faqCard.question,
+        answerContent: faqCard.answer,
+        backgroundImgLink: null,
+        faqCategoryId: 1,
+        updatedAt: faqCard.createdAt + 'T00:00:00Z',
+      });
+    }, 300);
+  });
 };
 
 export const getFaqCardQuestionList = async ({
-  size,
-  page,
-  sellerId,
-  itemId,
-  faqCategoryId,
+  faqCategoryId: _faqCategoryId,
 }: {
   size: number;
   page: number;
@@ -117,16 +122,27 @@ export const getFaqCardQuestionList = async ({
   itemId: number;
   faqCategoryId: number;
 }) => {
-  const response = await instance.get<
-    ApiResponse<Pagination<QuestionCardListType[] | [], 'questionCardList'>>
-  >(
-    generateApiPath(API_DOMAINS.SELLER_GET_FAQ_QUESTIONS, {
-      sellerId,
-      itemId,
-    }),
-    { params: { page, size, faqCategoryId } }
-  );
-  return response.data.result;
+  return new Promise<
+    Pagination<QuestionCardListType[] | [], 'questionCardList'>
+  >((resolve) => {
+    setTimeout(() => {
+      const questions = DUMMY_DATA.FAQ_CARDS.map((faqCard) => ({
+        id: faqCard.faqCardId,
+        questionContent: faqCard.question,
+        pinned: faqCard.isPinned,
+        updatedAt: faqCard.createdAt + 'T00:00:00Z',
+      }));
+
+      resolve({
+        questionCardList: questions,
+        listSize: questions.length,
+        totalPage: 1,
+        totalElements: questions.length,
+        isFirst: true,
+        isLast: true,
+      });
+    }, 300);
+  });
 };
 
 interface FaqCardListParams {
@@ -138,26 +154,31 @@ interface FaqCardListParams {
 }
 
 export const getFaqCardByCategory = async ({
-  sellerId,
-  itemId,
   faqCategoryId,
-  page = 1,
-  size = 10,
 }: FaqCardListParams) => {
-  const url = generateApiPath(API_DOMAINS.GET_FAQ_CARDS, {
-    sellerId,
-    itemId,
-  });
+  return new Promise<Pagination<FaqCardDetailResponse[] | [], 'faqCardList'>>(
+    (resolve) => {
+      setTimeout(() => {
+        const faqCards = DUMMY_DATA.FAQ_CARDS.map((faqCard) => ({
+          id: faqCard.faqCardId,
+          pinned: faqCard.isPinned,
+          adjustImg: true,
+          questionContent: faqCard.question,
+          answerContent: faqCard.answer,
+          backgroundImgLink: null,
+          faqCategoryId: faqCategoryId || 1,
+          updatedAt: faqCard.createdAt + 'T00:00:00Z',
+        }));
 
-  const { data } = await instance.get<
-    ApiResponse<Pagination<FaqCardDetailResponse | [], 'faqCardList'>>
-  >(url, {
-    params: {
-      faqCategoryId,
-      page,
-      size,
-    },
-  });
-
-  return data.result;
+        resolve({
+          faqCardList: faqCards,
+          listSize: faqCards.length,
+          totalPage: 1,
+          totalElements: faqCards.length,
+          isFirst: true,
+          isLast: true,
+        });
+      }, 300);
+    }
+  );
 };

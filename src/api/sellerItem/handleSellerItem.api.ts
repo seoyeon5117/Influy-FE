@@ -1,6 +1,6 @@
 import { instance } from '@/api/axiosInstance';
 import { generateApiPath } from '@/api/utils';
-import { API_DOMAINS, SELLER_API_DOMAINS } from '@/constants/api';
+import { SELLER_API_DOMAINS } from '@/constants/api';
 import { ApiResponse, Pagination } from '@/types/common/ApiResponse.types';
 import {
   ItemDetail,
@@ -16,14 +16,11 @@ import {
   TalkBoxCommentDTO,
   TalkBoxOpenStatusResponse,
 } from '@/types/common/ItemType.types';
+import { DUMMY_DATA } from '@/constants/dummyData';
 
 export const getSellerItems = async ({
   sellerId,
-  archive,
   sortType,
-  onGoing,
-  page,
-  size,
 }: {
   sellerId: number;
   archive: boolean;
@@ -32,28 +29,58 @@ export const getSellerItems = async ({
   page: number;
   size: number;
 }) => {
-  const params: Record<string, any> = {
-    sellerId,
-    archive,
-    onGoing,
-    page,
-    size,
-  };
+  return new Promise<
+    Pagination<SellerItemPreviewList[] | [], 'itemPreviewList'> & {
+      sortType: ItemSortType;
+    }
+  >((resolve) => {
+    setTimeout(() => {
+      // sellerId에 따라 해당 셀러의 아이템들만 필터링
+      const allItems = [
+        ...DUMMY_DATA.RECOMMENDED_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.POPULAR_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.CLOSE_DEADLINE_ITEMS.itemPreviewList,
+      ];
 
-  if (sortType !== null) {
-    params.sortType = sortType;
-  }
+      // 중복된 itemId 제거
+      const uniqueItems = allItems.filter(
+        (item, index, self) =>
+          index === self.findIndex((i) => i.itemId === item.itemId)
+      );
 
-  const response = await instance.get<
-    ApiResponse<
-      Pagination<SellerItemPreviewList[] | [], 'itemPreviewList'> & {
-        sortType: ItemSortType;
-      }
-    >
-  >(generateApiPath(API_DOMAINS.SELLER_MARKET_ITEMS, { sellerId }), {
-    params,
+      const sellerItems: SellerItemPreviewList[] = uniqueItems
+        .filter((item) => item.sellerId === sellerId)
+        .map((item) => ({
+          itemId: item.itemId,
+          sellerId: item.sellerId,
+          itemPeriod: item.itemPeriod,
+          itemName: item.itemName,
+          sellerName: item.sellerNickname,
+          startDate: item.startDate,
+          endDate: item.endDate,
+          tagline: item.tagline,
+          currentStatus: item.currentStatus,
+          liked: false,
+          talkBoxInfo: {
+            talkBoxOpenStatus: 'OPENED' as const,
+            waitingCnt: Math.floor(Math.random() * 10) + 1,
+            completedCnt: Math.floor(Math.random() * 20) + 5,
+          },
+          mainImg: item.itemMainImg,
+          isDateUndefined: false,
+        }));
+
+      resolve({
+        itemPreviewList: sellerItems,
+        listSize: sellerItems.length,
+        totalPage: 1,
+        totalElements: sellerItems.length,
+        isFirst: true,
+        isLast: true,
+        sortType: sortType || 'CREATE_DATE',
+      });
+    }, 500);
   });
-  return response.data.result;
 };
 
 export const postItem = async (data: ItemPostDetail) => {
@@ -92,36 +119,132 @@ export const patchItemArchiveStatus = async (
 };
 
 export const getSellerItemDetail = async ({
-  sellerId,
+  sellerId: _sellerId,
   itemId,
 }: {
   sellerId: number;
   itemId: number;
 }) => {
-  const response = await instance.get<ApiResponse<ItemDetail>>(
-    generateApiPath(API_DOMAINS.SELLER_MARKET_ITEM, { sellerId, itemId })
-  );
-  return response.data.result;
+  return new Promise<ItemDetail>((resolve) => {
+    setTimeout(() => {
+      const allItems = [
+        ...DUMMY_DATA.RECOMMENDED_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.POPULAR_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.CLOSE_DEADLINE_ITEMS.itemPreviewList,
+      ];
+
+      const uniqueItems = allItems.filter(
+        (item, index, self) =>
+          index === self.findIndex((i) => i.itemId === item.itemId)
+      );
+
+      const itemData =
+        uniqueItems.find((item) => item.itemId === itemId) ||
+        DUMMY_DATA.RECOMMENDED_ITEMS.itemPreviewList[0];
+
+      resolve({
+        itemId,
+        itemPeriod: itemData.itemPeriod,
+        itemName: itemData.itemName,
+        startDate: itemData.startDate,
+        endDate: itemData.endDate,
+        tagline: itemData.tagline,
+        currentStatus: itemData.currentStatus,
+        marketLink: 'https://example.com/market',
+        isArchived: false,
+        itemImgList: [
+          itemData.itemMainImg,
+          itemData.itemMainImg.replace('image1', 'image2'),
+          itemData.itemMainImg.replace('image1', 'image3'),
+        ],
+        itemCategoryList: [1, 2],
+        comment: itemData.tagline,
+        regularPrice: 89000,
+        salePrice: 79000,
+        status: itemData.currentStatus,
+        isDateUndefined: false,
+        sellerInfo: {
+          id: itemId,
+          nickname: itemData.sellerNickname,
+          profileImg: itemData.sellerProfileImg,
+          instagram: itemData.sellerUsername,
+        },
+        talkBoxOpenStatus: 'OPENED' as const,
+        liked: itemData.liked,
+        unchecked: false,
+      });
+    }, 300);
+  });
 };
 
 export const getItemOverview = async ({
-  sellerId,
+  sellerId: _sellerId,
   itemId,
 }: {
   sellerId: number;
   itemId: number;
 }): Promise<ItemOverviewDTO> => {
-  const response = await instance.get(
-    generateApiPath(SELLER_API_DOMAINS.ITEM_OVERVIEW, { sellerId, itemId })
-  );
-  return response.data.result ?? null;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const allItems = [
+        ...DUMMY_DATA.RECOMMENDED_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.POPULAR_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.CLOSE_DEADLINE_ITEMS.itemPreviewList,
+      ];
+
+      const uniqueItems = allItems.filter(
+        (item, index, self) =>
+          index === self.findIndex((i) => i.itemId === item.itemId)
+      );
+
+      const itemData =
+        uniqueItems.find((item) => item.itemId === itemId) ||
+        DUMMY_DATA.RECOMMENDED_ITEMS.itemPreviewList[0];
+
+      resolve({
+        id: itemId,
+        itemName: itemData.itemName,
+        tagline: itemData.tagline || '',
+        mainImg: itemData.itemMainImg,
+        talkBoxOpenStatus: 'OPENED' as const,
+      });
+    }, 300);
+  });
 };
 
 export const getTalkBoxOpened = async (): Promise<TalkBoxOpenedListDTO> => {
-  const response = await instance.get(
-    generateApiPath(SELLER_API_DOMAINS.TALK_BOX_OPENED_ITEMS)
-  );
-  return response.data.result;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const allItems = [
+        ...DUMMY_DATA.RECOMMENDED_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.POPULAR_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.CLOSE_DEADLINE_ITEMS.itemPreviewList,
+      ];
+
+      const uniqueItems = allItems.filter(
+        (item, index, self) =>
+          index === self.findIndex((i) => i.itemId === item.itemId)
+      );
+
+      const talkBoxOpenedDtoList = uniqueItems.map((item) => ({
+        itemId: item.itemId,
+        itemMainImg: item.itemMainImg,
+        itemName: item.itemName,
+        talkBoxCntInfo: {
+          talkBoxOpenStatus: 'OPENED' as const,
+          waitingCnt: Math.floor(Math.random() * 10) + 1,
+          completedCnt: Math.floor(Math.random() * 20) + 5,
+        },
+        newCnt: Math.floor(Math.random() * 5),
+      }));
+
+      resolve({
+        talkBoxOpenedDtoList,
+        cnt: talkBoxOpenedDtoList.length,
+        isItemExist: talkBoxOpenedDtoList.length > 0,
+      });
+    }, 300);
+  });
 };
 
 export const postTalkBoxOpenStatus = async ({
@@ -149,10 +272,33 @@ export const postTalkBoxOpenStatus = async ({
 export const getTalkBoxDefaultComment = async (
   itemId: number
 ): Promise<TalkBoxCommentDTO> => {
-  const response = await instance.get(
-    generateApiPath(SELLER_API_DOMAINS.SELLER_TALK_BOX_COMMENT, { itemId })
-  );
-  return response.data.result;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const allItems = [
+        ...DUMMY_DATA.RECOMMENDED_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.POPULAR_ITEMS.itemPreviewList,
+        ...DUMMY_DATA.CLOSE_DEADLINE_ITEMS.itemPreviewList,
+      ];
+
+      const uniqueItems = allItems.filter(
+        (item, index, self) =>
+          index === self.findIndex((i) => i.itemId === item.itemId)
+      );
+
+      const itemData =
+        uniqueItems.find((item) => item.itemId === itemId) ||
+        DUMMY_DATA.RECOMMENDED_ITEMS.itemPreviewList[0];
+
+      resolve({
+        sellerId: itemData.sellerId,
+        sellerProfileImg: itemData.sellerProfileImg,
+        sellerUsername: itemData.sellerUsername,
+        sellerNickname: itemData.sellerNickname,
+        createdAt: new Date().toISOString(),
+        talkBoxComment: `${itemData.itemName}에 대해 궁금한 점이 있으시면 언제든 문의해 주세요!`,
+      });
+    }, 200);
+  });
 };
 
 interface PatchTalkBoxDefaultCommentRequest {

@@ -1,59 +1,62 @@
-import { instance } from '@/api/axiosInstance';
-import { generateApiPath } from '@/api/utils';
-import { API_DOMAINS } from '@/constants/api';
-import {
-  ApiResponse,
-  Pagination,
-  PaginationType,
-} from '@/types/common/ApiResponse.types';
+import { DUMMY_DATA } from '@/constants/dummyData';
+import { Pagination, PaginationType } from '@/types/common/ApiResponse.types';
 import { ItemCardType } from '@/types/common/ItemType.types';
 import { LikeItemResponse, LikeType } from '@/types/user/Like.types';
 
 export const postItemLike = async ({
-  sellerId,
-  itemId,
+  sellerId: _sellerId,
+  itemId: _itemId,
 }: {
   sellerId: number;
   itemId: number;
-}) => {
-  const response = await instance.post<ApiResponse<LikeItemResponse>>(
-    generateApiPath(API_DOMAINS.POST_ITEM_LIKE, { sellerId, itemId })
-  );
-  return response.data.result;
+}): Promise<LikeItemResponse> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(DUMMY_DATA.ITEM_LIKE_RESPONSE);
+    }, 400);
+  });
 };
 
 export const patchItemLike = async ({
-  sellerId,
-  itemId,
+  sellerId: _sellerId,
+  itemId: _itemId,
 }: {
   sellerId: number;
   itemId: number;
-}) => {
-  const response = await instance.patch<ApiResponse<LikeItemResponse>>(
-    generateApiPath(API_DOMAINS.PATCH_ITEM_LIKE, { sellerId, itemId })
-  );
-  return response.data.result;
+}): Promise<LikeItemResponse> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        ...DUMMY_DATA.ITEM_LIKE_RESPONSE,
+        likeStatus: 'UNLIKE' as const,
+      });
+    }, 400);
+  });
 };
 
-export const getLikedItemList = async ({ page, size }: PaginationType) => {
-  const response = await instance.get<
-    ApiResponse<Pagination<ItemCardType[] | [], 'itemLikeList'>>
-  >(API_DOMAINS.GET_LIKED_ITEM_LIST, { params: { page, size } });
-  return response.data.result;
+export const getLikedItemList = async ({
+  page: _page,
+  size: _size,
+}: PaginationType): Promise<
+  Pagination<ItemCardType[] | [], 'itemLikeList'>
+> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(DUMMY_DATA.LIKED_ITEMS);
+    }, 600);
+  });
 };
 
 export const getItemLikeCounts = async ({
-  sellerId,
-  itemId,
+  sellerId: _sellerId,
+  itemId: _itemId,
 }: {
   sellerId: number;
   itemId: number;
-}) => {
-  const response = await instance.get<ApiResponse<LikeType>>(
-    generateApiPath(API_DOMAINS.GET_ITEM_LIKE_COUNTS, {
-      sellerId,
-      itemId,
-    })
-  );
-  return response.data.result;
+}): Promise<LikeType> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(DUMMY_DATA.ITEM_LIKE_COUNTS);
+    }, 300);
+  });
 };

@@ -1,19 +1,17 @@
-import {
-  ApiResponse,
-  Pagination,
-  PaginationType,
-} from '@/types/common/ApiResponse.types';
-import { instance } from '@/api/axiosInstance';
+import { Pagination, PaginationType } from '@/types/common/ApiResponse.types';
 import { ItemCardType } from '@/types/common/ItemType.types';
-import { API_DOMAINS } from '@/constants/api';
+import { DUMMY_DATA } from '@/constants/dummyData';
 
 export const getSearchedItems = async ({
-  query,
-  page,
-  size,
-}: PaginationType & { query: string }) => {
-  const response = await instance.get<
-    ApiResponse<Pagination<ItemCardType[] | [], 'itemPreviewList'>>
-  >(API_DOMAINS.GET_SEARCHED_ITEMS, { params: { query, page, size } });
-  return response.data.result;
+  query: _query,
+  page: _page,
+  size: _size,
+}: PaginationType & { query: string }): Promise<
+  Pagination<ItemCardType[] | [], 'itemPreviewList'>
+> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(DUMMY_DATA.SEARCHED_ITEMS);
+    }, 600);
+  });
 };

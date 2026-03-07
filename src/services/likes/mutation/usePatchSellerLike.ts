@@ -67,8 +67,6 @@ export const usePatchSellerLike = () => {
           typeof cached === 'object' &&
           'targetId' in cached
         ) {
-          console.log(cached);
-
           // 단일 객체 처리
           if (cached.targetId === sellerId) {
             const updated = {

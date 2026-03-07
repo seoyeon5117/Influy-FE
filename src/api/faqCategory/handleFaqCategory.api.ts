@@ -6,17 +6,28 @@ import { ApiResponse } from '@/types/common/ApiResponse.types';
 import { CategoryType } from '@/types/common/CategoryType.types';
 import { FAQCategoryResponse } from '@/types/common/FAQ.types';
 import { CategoryPatchType } from '@/services/sellerFaqCard/mutation/usePatchFaqCategory';
+import { DUMMY_DATA } from '@/constants/dummyData';
 export const getFaqCategory = async ({
-  sellerId,
-  itemId,
+  sellerId: _sellerId,
+  itemId: _itemId,
 }: {
   sellerId: number;
   itemId: number;
 }) => {
-  const response = await instance.get<ApiResponse<FAQCategoryResponse>>(
-    generateApiPath(API_DOMAINS.SELLER_GET_FAQ_CATEGORIES, { sellerId, itemId })
-  );
-  return response.data.result;
+  return new Promise<FAQCategoryResponse>((resolve) => {
+    setTimeout(() => {
+      const categoryList = DUMMY_DATA.FAQ_CATEGORIES.map((category) => ({
+        id: category.faqCategoryId,
+        name: category.categoryName,
+        categoryOrder: category.order,
+      }));
+
+      resolve({
+        viewList: categoryList,
+        listSize: categoryList.length,
+      });
+    }, 300);
+  });
 };
 
 export const postFaqCategory = async ({

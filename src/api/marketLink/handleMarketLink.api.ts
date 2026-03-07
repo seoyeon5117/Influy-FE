@@ -30,10 +30,33 @@ export const patchMarketLink = async ({
 };
 
 export const getMarketLinks = async ({ sellerId }: { sellerId: number }) => {
-  const response = await instance.get<ApiResponse<LinkType[] | []>>(
-    generateApiPath(API_DOMAINS.SELLER_MARKET_LINKS, { sellerId })
-  );
-  return response.data;
+  return new Promise<ApiResponse<LinkType[] | []>>((resolve) => {
+    setTimeout(() => {
+      const links: LinkType[] =
+        sellerId === 1
+          ? [
+              {
+                id: 1,
+                linkName: '깃허브',
+                link: 'https://github.com/seoyeon5117',
+              },
+            ]
+          : [
+              {
+                id: 2,
+                linkName: '깃허브',
+                link: 'https://github.com/seoyeon5117',
+              },
+            ];
+
+      resolve({
+        code: 'COMMON200',
+        isSuccess: true,
+        message: '성공',
+        result: links,
+      });
+    }, 200);
+  });
 };
 
 export const deleteMarketLink = async ({ linkId }: { linkId: number }) => {

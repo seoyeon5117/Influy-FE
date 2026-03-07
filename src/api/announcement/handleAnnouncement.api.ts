@@ -65,10 +65,24 @@ export const getPrimaryAnnouncement = async ({
 }: {
   sellerId: number;
 }) => {
-  const response = await instance.get<ApiResponse<PrimaryAnnouncementType>>(
-    generateApiPath(API_DOMAINS.SELLER_PRIMARY_ANNOUNCEMENT, { sellerId })
-  );
-  return response.data.result;
+  return new Promise<PrimaryAnnouncementType | null>((resolve) => {
+    setTimeout(() => {
+      const announcement =
+        sellerId === 1
+          ? {
+              id: 1,
+              title: '🎉 새로운 뷰티 제품 출시! 할인 이벤트 진행중',
+              totalAnnouncements: 3,
+            }
+          : {
+              id: 2,
+              title: '💎 럭셔리 컬렉션 신규 입고 소식',
+              totalAnnouncements: 2,
+            };
+
+      resolve(announcement);
+    }, 200);
+  });
 };
 
 export const deleteAnnouncement = async ({

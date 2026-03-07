@@ -1,21 +1,25 @@
-import { API_DOMAINS } from '@/constants/api';
+import { DUMMY_DATA } from '@/constants/dummyData';
 import { ApiResponse } from '@/types/common/ApiResponse.types';
-import { instance } from '@/api/axiosInstance';
 import {
   UserEditProfileType,
   UserProfileType,
 } from '@/types/user/UserProfile.types';
-import { generateApiPath } from '@/api/utils';
 
 export const getUserProfile = async ({
-  memberId,
+  memberId: _memberId,
 }: {
   memberId: number;
 }): Promise<ApiResponse<UserProfileType>> => {
-  const response = await instance.get(
-    generateApiPath(API_DOMAINS.USER_PROFILE, { memberId })
-  );
-  return response.data;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        code: '200',
+        isSuccess: true,
+        message: 'success',
+        result: DUMMY_DATA.USER_PROFILE as any,
+      });
+    }, 500);
+  });
 };
 
 export const patchUserProfile = async ({
@@ -23,6 +27,14 @@ export const patchUserProfile = async ({
 }: {
   data: UserEditProfileType;
 }) => {
-  const response = await instance.patch(API_DOMAINS.USER_MY_PROFILE, data);
-  return response.data;
+  return new Promise<any>((resolve) => {
+    setTimeout(() => {
+      resolve({
+        code: '200',
+        isSuccess: true,
+        message: '프로필이 성공적으로 업데이트되었습니다.',
+        result: { ...DUMMY_DATA.USER_PROFILE, ...data },
+      });
+    }, 700);
+  });
 };

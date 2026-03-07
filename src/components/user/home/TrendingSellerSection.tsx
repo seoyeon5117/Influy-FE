@@ -27,6 +27,10 @@ const TrendingSellerSection = ({
   return (
     <>
       <section className="flex w-full flex-col gap-4 pt-7 pb-3">
+        <h1 className="subhead-b text-error bg-black p-5">
+          현재 백엔드 서버가 운영되지 않아 더미 데이터를 기반으로 동작합니다.
+          이로 인해 실제 서비스와 일부 차이가 있을 수 있습니다.
+        </h1>
         <h1 className="subhead-b px-5 text-black">요즘 핫한 인플루언서</h1>
         <ul className="scrollbar-hide flex gap-6 overflow-x-auto px-5">
           {isTrendingSellerLoading &&

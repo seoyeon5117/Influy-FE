@@ -16,10 +16,10 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  memberId: null,
+  memberId: 123,
   sellerId: null,
-  accessToken: null,
-  kakaoId: null,
+  accessToken: 'dummy_logged_in_token_12345',
+  kakaoId: 12345,
 
   setAuthInfo: ({ accessToken, memberId, sellerId = null }) => {
     set({

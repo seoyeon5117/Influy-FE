@@ -9,16 +9,10 @@ export const usePatchUsername = (onSuccessCallback?: () => void) => {
   return useMutation({
     mutationFn: ({ data }: { data: { username: string } }) =>
       patchUsername({ data }),
-    onSuccess: (response) => {
-      const id = response?.id;
-      if (id) {
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.USER_PROFILE, id], // 멤버 아이디 쿼리키에 추가. 본인 프로필 조회랑 다른 유저 프로필 조회 api랑 똑같음.
-        });
-      }
-
+    onSuccess: (_response) => {
+      // Note: response doesn't contain id, but we still need to invalidate queries
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.USER_PROFILE],
+        queryKey: [QUERY_KEYS.USER_PROFILE], // Invalidate all user profile queries since we don't have specific id
       });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.SELLER_MY_PROFILE],

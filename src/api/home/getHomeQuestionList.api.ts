@@ -1,23 +1,19 @@
-import { SELLER_API_DOMAINS } from '@/constants/api';
-import { ApiResponse, Pagination } from '@/types/common/ApiResponse.types';
-import { instance } from '../axiosInstance';
+import { DUMMY_DATA } from '@/constants/dummyData';
+import { Pagination } from '@/types/common/ApiResponse.types';
 import { SellerHomeItemStatus } from '@/types/common/ItemType.types';
 
 export const getHomeQuestionList = async ({
-  page,
-  size,
+  page: _page,
+  size: _size,
 }: {
   page: number;
   size: number;
-}) => {
-  const response = await instance.get<
-    ApiResponse<
-      Pagination<SellerHomeItemStatus[] | [], 'itemList'> & {
-        hasAnyItem: boolean;
-      }
-    >
-  >(SELLER_API_DOMAINS.SELLER_MY_HOME_QUESTIONS, {
-    params: { page, size },
+}): Promise<
+  Pagination<SellerHomeItemStatus[] | [], 'itemList'> & { hasAnyItem: boolean }
+> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(DUMMY_DATA.HOME_QUESTIONS);
+    }, 500);
   });
-  return response.data.result;
 };

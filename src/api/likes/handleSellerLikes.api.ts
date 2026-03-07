@@ -1,11 +1,7 @@
-import { instance } from '@/api/axiosInstance';
-import { generateApiPath } from '@/api/utils';
-import { API_DOMAINS } from '@/constants/api';
-import {
-  ApiResponse,
-  Pagination,
-  PaginationType,
-} from '@/types/common/ApiResponse.types';
+// import { instance } from '@/api/axiosInstance';
+// import { generateApiPath } from '@/api/utils';
+// import { API_DOMAINS } from '@/constants/api';
+import { Pagination, PaginationType } from '@/types/common/ApiResponse.types';
 import {
   LikeSellerResponse,
   LikeType,
@@ -13,29 +9,83 @@ import {
 } from '@/types/user/Like.types';
 
 export const postSellerLike = async ({ sellerId }: { sellerId: number }) => {
-  const response = await instance.post<ApiResponse<LikeSellerResponse>>(
-    generateApiPath(API_DOMAINS.POST_SELLER_LIKE, { sellerId })
-  );
-  return response.data.result;
+  return new Promise<LikeSellerResponse>((resolve) => {
+    setTimeout(() => {
+      resolve({
+        likeId: sellerId + 1000,
+        memberId: 123,
+        targetType: 'SELLER' as const,
+        likeStatus: 'LIKE' as const,
+        sellerId,
+        sellerName: `셀러${sellerId}`,
+      });
+    }, 300);
+  });
 };
 
 export const patchSellerLike = async ({ sellerId }: { sellerId: number }) => {
-  const response = await instance.patch<ApiResponse<LikeSellerResponse>>(
-    generateApiPath(API_DOMAINS.PATCH_SELLER_LIKE, { sellerId })
-  );
-  return response.data.result;
+  return new Promise<LikeSellerResponse>((resolve) => {
+    setTimeout(() => {
+      resolve({
+        likeId: sellerId + 1000,
+        memberId: 123,
+        targetType: 'SELLER' as const,
+        likeStatus: 'UNLIKE' as const,
+        sellerId,
+        sellerName: `셀러${sellerId}`,
+      });
+    }, 300);
+  });
 };
 
 export const getSellerLikes = async ({ sellerId }: { sellerId: number }) => {
-  const response = await instance.get<ApiResponse<LikeType>>(
-    generateApiPath(API_DOMAINS.SELLER_MARKET_LIKES, { sellerId })
-  );
-  return response.data.result;
+  return new Promise<LikeType>((resolve) => {
+    setTimeout(() => {
+      resolve({
+        targetType: 'SELLER' as const,
+        targetId: sellerId,
+        likeCnt: 1250 + sellerId * 100,
+        liked: sellerId === 1,
+      });
+    }, 200);
+  });
 };
 
-export const getLikedSellerList = async ({ page, size }: PaginationType) => {
-  const response = await instance.get<
-    ApiResponse<Pagination<SellerLikeList[] | [], 'sellerLikeList'>>
-  >(API_DOMAINS.GET_LIKED_SELLER_LIST, { params: { page, size } });
-  return response.data.result;
+export const getLikedSellerList = async ({
+  page: _page,
+  size: _size,
+}: PaginationType) => {
+  return new Promise<Pagination<SellerLikeList[] | [], 'sellerLikeList'>>(
+    (resolve) => {
+      setTimeout(() => {
+        const sellers = [
+          {
+            sellerId: 1,
+            nickName: '원영',
+            userName: 'wonyoung_official',
+            profileImgLink: '/profile1.jpg',
+            likeCnt: 1250,
+            liked: true,
+          },
+          {
+            sellerId: 2,
+            nickName: '제니',
+            userName: 'jennierubyjane',
+            profileImgLink: '/profile2.jpg',
+            likeCnt: 2100,
+            liked: true,
+          },
+        ];
+
+        resolve({
+          sellerLikeList: sellers,
+          listSize: sellers.length,
+          totalPage: 1,
+          totalElements: sellers.length,
+          isFirst: true,
+          isLast: true,
+        });
+      }, 400);
+    }
+  );
 };

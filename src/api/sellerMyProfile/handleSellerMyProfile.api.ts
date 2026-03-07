@@ -7,10 +7,22 @@ import {
 } from '@/types/seller/SellerProfile.types';
 
 export const getSellerMyProfile = async () => {
-  const response = await instance.get<ApiResponse<SellerProfileType>>(
-    SELLER_API_DOMAINS.SELLER_MY_PROFILE
-  );
-  return response.data.result;
+  return new Promise<SellerProfileType>((resolve) => {
+    setTimeout(() => {
+      resolve({
+        id: 1,
+        sellerId: 1,
+        username: 'wonyoung_official',
+        nickname: '원영',
+        backgroundImg: '/profile1.jpg',
+        profileImg: '/profile1.jpg',
+        instagram: 'wonyoung_official',
+        tiktok: 'https://tiktok.com/@wonyoung',
+        youtube: 'https://youtube.com/@wonyoung',
+        email: 'wonyoung@example.com',
+      });
+    }, 300);
+  });
 };
 
 export const patchSellerMyProfile = async ({

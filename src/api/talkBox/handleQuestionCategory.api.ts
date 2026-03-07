@@ -7,6 +7,7 @@ import {
   GeneratedNameList,
   UserCategoryList,
 } from '@/types/common/TalkBox.types';
+import { DUMMY_DATA } from '@/constants/dummyData';
 
 export const postGenerateQuestionCategory = async ({
   itemId,
@@ -42,17 +43,24 @@ export const postAddQuestionCategories = async ({
 };
 
 export const getCategoryList = async ({
-  itemId,
+  itemId: _itemId,
 }: {
   itemId: number;
 }): Promise<CategoryListResponse> => {
-  const response = await instance.get(
-    generateApiPath(SELLER_API_DOMAINS.SELLER_CATEGORY_LIST, {
-      itemId,
-    })
-  );
-
-  return response.data.result;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        completedCnt: 25,
+        waitingCnt: 8,
+        completedCategoryList: DUMMY_DATA.TALKBOX_CATEGORIES.filter(
+          (cat) => cat.unCheckedCnt === 0
+        ),
+        waitingCategoryList: DUMMY_DATA.TALKBOX_CATEGORIES.filter(
+          (cat) => cat.unCheckedCnt > 0
+        ),
+      } as any);
+    }, 300);
+  });
 };
 
 export const getCategoryQuestionCounts = async ({
@@ -70,15 +78,18 @@ export const getCategoryQuestionCounts = async ({
 };
 
 export const getUserCategoryList = async (
-  itemId: number
+  _itemId: number
 ): Promise<UserCategoryList> => {
-  const response = await instance.get(
-    generateApiPath(API_DOMAINS.GET_TALK_BOX_CATEGORY, {
-      itemId,
-    })
-  );
-
-  return response.data.result;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        viewList: DUMMY_DATA.TALKBOX_CATEGORIES.map((cat) => ({
+          questionCategoryId: cat.questionCategoryId,
+          questionCategoryName: cat.questionCategoryName,
+        })),
+      } as any);
+    }, 300);
+  });
 };
 
 export interface UserQuestionResponse {

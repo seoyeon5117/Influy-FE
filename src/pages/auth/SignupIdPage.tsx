@@ -106,7 +106,7 @@ export const SignupIdPage = () => {
 
   // 중복 여부 판단
   const isDuplicated = useMemo(() => {
-    return duplicateCheckData?.result === 'USERNAME_ALREADY_EXISTS';
+    return duplicateCheckData?.result?.isAvailable === false;
   }, [duplicateCheckData]);
 
   useEffect(() => {

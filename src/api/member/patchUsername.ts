@@ -1,5 +1,10 @@
-import { API_DOMAINS } from '@/constants/api';
-import { instance } from '@/api/axiosInstance';
+// import { API_DOMAINS } from '@/constants/api';
+// import { instance } from '@/api/axiosInstance';
+
+interface PatchUsernameResponse {
+  username: string;
+  isSuccess: boolean;
+}
 
 export const patchUsername = async ({
   data,
@@ -7,7 +12,13 @@ export const patchUsername = async ({
   data: {
     username: string;
   };
-}) => {
-  const response = await instance.patch(API_DOMAINS.HANDLE_USERNAME, data);
-  return response.data.result;
+}): Promise<PatchUsernameResponse> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        username: data.username,
+        isSuccess: true,
+      });
+    }, 300);
+  });
 };

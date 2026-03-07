@@ -1,72 +1,95 @@
 // 스웨거 '질문 관리'
 import { instance } from '@/api/axiosInstance';
 import { generateApiPath } from '@/api/utils';
-import { SELLER_API_DOMAINS, API_DOMAINS } from '@/constants/api';
+import { SELLER_API_DOMAINS } from '@/constants/api';
 import {
   QuestionResponse,
   SingleQuestionAnswerDTO,
   UserTalkBoxChat,
 } from '@/types/common/TalkBox.types';
-import {
-  ApiResponse,
-  Pagination,
-  PaginationType,
-} from '@/types/common/ApiResponse.types';
+import { Pagination, PaginationType } from '@/types/common/ApiResponse.types';
+import { DUMMY_DATA } from '@/constants/dummyData';
 export const getAllQuestions = async ({
-  questionCategoryId,
-  isAnswered,
+  questionCategoryId: _questionCategoryId,
+  isAnswered: _isAnswered,
   page = 0,
-  size = 10,
+  size: _size = 10,
 }: {
   questionCategoryId: number;
   isAnswered: boolean;
   page?: number;
   size?: number;
 }): Promise<QuestionResponse> => {
-  const response = await instance.get(
-    generateApiPath(SELLER_API_DOMAINS.SELLER_ALL_QUESTIONS_IN_CATEGORY, {
-      questionCategoryId,
-    }),
-    {
-      params: {
-        isAnswered,
-        page,
-        size,
-      },
-    }
-  );
-
-  return response.data.result;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (page === 0) {
+        resolve(DUMMY_DATA.TALKBOX_QUESTIONS as any);
+      } else {
+        resolve({
+          questions: [],
+          listSize: 0,
+          newQuestionCnt: 0,
+          totalPage: 1,
+          totalElements: 0,
+          isFirst: false,
+          isLast: true,
+        });
+      }
+    }, 300);
+  });
 };
 
 export const getQuestionsByTag = async ({
   questionTagId,
-  isAnswered,
+  isAnswered: _isAnswered,
   page = 0,
-  size = 10,
+  size: _size = 10,
 }: {
   questionTagId: number | null;
   isAnswered: boolean;
   page?: number;
   size?: number;
 }): Promise<QuestionResponse> => {
-  if (questionTagId === null) {
-    throw new Error('questionTagId must not be null');
-  }
-  const response = await instance.get(
-    generateApiPath(SELLER_API_DOMAINS.SELLER_QUESTIONS_BY_TAG, {
-      questionTagId,
-    }),
-    {
-      params: {
-        isAnswered,
-        page,
-        size,
-      },
-    }
-  );
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (questionTagId === null) {
+        resolve({
+          questions: [],
+          listSize: 0,
+          newQuestionCnt: 0,
+          totalPage: 1,
+          totalElements: 0,
+          isFirst: true,
+          isLast: true,
+        });
+        return;
+      }
 
-  return response.data.result;
+      if (page === 0) {
+        // 특정 태그에 해당하는 질문들만 필터링
+        const filteredQuestions = DUMMY_DATA.TALKBOX_QUESTIONS.questions.filter(
+          (q) => q.tagId === questionTagId
+        );
+
+        resolve({
+          ...DUMMY_DATA.TALKBOX_QUESTIONS,
+          questions: filteredQuestions,
+          listSize: filteredQuestions.length,
+          totalElements: filteredQuestions.length,
+        } as any);
+      } else {
+        resolve({
+          questions: [],
+          listSize: 0,
+          newQuestionCnt: 0,
+          totalPage: 1,
+          totalElements: 0,
+          isFirst: false,
+          isLast: true,
+        });
+      }
+    }, 300);
+  });
 };
 
 export const deleteCategoryQuestions = async ({
@@ -112,17 +135,26 @@ export const getSingleQuestionAnswer = async ({
 };
 
 export const getUserTalkBoxHistory = async ({
-  itemId,
+  itemId: _itemId,
   page,
-  size,
+  size: _size,
 }: PaginationType & { itemId: number }) => {
-  const url = generateApiPath(API_DOMAINS.GET_USER_TALK_BOX_HISTORY, {
-    itemId,
-  });
-
-  const response = await instance.get<
-    ApiResponse<Pagination<UserTalkBoxChat[] | [], 'chatList'>>
-  >(url, { params: { page, size } });
-
-  return response.data.result;
+  return new Promise<Pagination<UserTalkBoxChat[] | [], 'chatList'>>(
+    (resolve) => {
+      setTimeout(() => {
+        if (page === 1) {
+          resolve(DUMMY_DATA.TALKBOX_USER_CHAT_HISTORY as any);
+        } else {
+          resolve({
+            chatList: [],
+            listSize: 0,
+            totalPage: 1,
+            totalElements: 0,
+            isFirst: false,
+            isLast: true,
+          });
+        }
+      }, 300);
+    }
+  );
 };

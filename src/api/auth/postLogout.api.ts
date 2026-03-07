@@ -1,7 +1,9 @@
-import { API_DOMAINS } from '@/constants/api';
-import { instance } from '@/api/axiosInstance';
+import { DUMMY_DATA } from '@/constants/dummyData';
 
 export const postLogout = async () => {
-  const response = await instance.post(API_DOMAINS.LOGOUT);
-  return response.data.result;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(DUMMY_DATA.LOGOUT_SUCCESS);
+    }, 500);
+  });
 };

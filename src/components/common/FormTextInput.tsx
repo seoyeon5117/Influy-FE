@@ -320,7 +320,6 @@ export const FormSalePriceInput = <T extends FieldValues>({
   const regularPrice = watch('price');
 
   // 숫자 세개마다 컴마
-  console.log(typeof salePrice === 'number');
   const formattedPrice =
     typeof salePrice === 'number' ? salePrice.toLocaleString() : '';
 

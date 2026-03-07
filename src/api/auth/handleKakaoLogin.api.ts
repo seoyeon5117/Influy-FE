@@ -1,25 +1,16 @@
-import { API_DOMAINS } from '@/constants/api';
-import { instance } from '@/api/axiosInstance';
+import { DUMMY_DATA } from '@/constants/dummyData';
 import {
   LoginedUserResult,
   RegisterResult,
 } from '@/types/common/AuthTypes.types';
-import { ApiResponse } from '@/types/common/ApiResponse.types';
 
 export const handleKakaoLogin = async (
-  code: string,
-  redirectToLocal: boolean
-) => {
-  const response = await instance.get<
-    ApiResponse<RegisterResult | LoginedUserResult>
-  >(API_DOMAINS.OAUTH_KAKAO, {
-    params: {
-      code,
-      redirectToLocal,
-    },
+  _code: string,
+  _redirectToLocal: boolean
+): Promise<RegisterResult | LoginedUserResult> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(DUMMY_DATA.KAKAO_LOGIN as any);
+    }, 800);
   });
-  if (!response.data.result) {
-    throw new Error('카카오 로그인 실패');
-  }
-  return response.data.result;
 };

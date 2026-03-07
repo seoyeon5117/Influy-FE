@@ -1,15 +1,19 @@
-import { API_DOMAINS } from '@/constants/api';
-import { instance } from '@/api/axiosInstance';
+import { DUMMY_DATA } from '@/constants/dummyData';
 import { SellerPickType } from '@/types/user/Home.types';
-import { generateApiPath } from '../utils';
 
 export const getSellerPick = async ({
-  sellerId,
+  sellerId: _sellerId,
 }: {
   sellerId: number;
 }): Promise<SellerPickType> => {
-  const response = await instance.get(
-    generateApiPath(API_DOMAINS.HOME_SELLER_PICK, { sellerId })
-  );
-  return response.data.result;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        ...DUMMY_DATA.SELLER_PICK,
+        mainImgList: [DUMMY_DATA.SELLER_PICK.mainImgList[0]] as [
+          { itemId: number; mainImg: string },
+        ],
+      });
+    }, 500);
+  });
 };
